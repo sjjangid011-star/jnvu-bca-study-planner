@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Study Planner for JNVU BCA IV Semester Examination">
+  <title>JNVU BCA Exam Study Planner</title>
+  
+  <!-- React & ReactDOM from CDN -->
+  <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  
+  <!-- Babel for JSX -->
+  <script src="https://unpkg.com/@babel/standalone@7.22.20/babel.min.js"></script>
+  
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #F8FAFC;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    // ─── DATA ───────────────────────────────────────────────────────────────────
+
+    const examSchedule = [
+      { date: "Jul 1", day: "Wed", code: "CSA 6005T", name: "Internet Technology",     color: "#7C3AED", days: 7 },
+      { date: "Jul 2", day: "Thu", code: "CSA 6006T", name: "Operating System",        color: "#0369A1", days: 8 },
+      { date: "Jul 3", day: "Fri", code: "CSA 6007T", name: "Python Programming",      color: "#047857", days: 9 },
+      { date: "Jul 4", day: "Sat", code: "CSA 6008T", name: "Client Server Computing", color: "#B45309", days: 10 },
+    ];
+
+    const studyPlan = [
+      { date:"Jun 24", tag:"TODAY",   type:"study",    subject:"Internet Technology",     tasks:["Unit I — WWW, Web Browsers, URLs, Domain Names, TCP/IP, Email Protocols (SMTP/POP3/IMAP)","Unit II — HTML: Tags, Head/Body, Images, Hyperlinks, Tables, CSS introduction"], hrs:"4–5 hrs" },
+      { date:"Jun 25", tag:"Day 2",   type:"study",    subject:"Internet Technology",     tasks:["Unit III — Frames, Forms (all input types), HTML Editors, Static vs Dynamic","Unit IV — E-Commerce types (B2B/B2C/C2C/G2C), Advantages, IT Act 2000","Unit V — Electronic Payment Systems: Digital Token, Smart Cards, Credit Cards"], hrs:"5–6 hrs" },
+      { date:"Jun 26", tag:"Day 3",   type:"study",    subject:"Operating System",        tasks:["Unit I — OS types, Characteristics, System Calls, Kernel, Shell","Unit II — CPU Scheduling (FCFS, SJF, Round Robin) ← Practice Gantt charts & Numericals!"], hrs:"5–6 hrs" },
+      { date:"Jun 27", tag:"Day 4",   type:"study",    subject:"Operating System",        tasks:["Unit III — Deadlock: 4 conditions, Banker's Algorithm with numerical example","Unit IV — Paging, Page Replacement (FIFO, LRU) with page-fault calculation","Unit V — Disk Scheduling algorithms (SSTF, SCAN, C-SCAN) with numerical"], hrs:"5–6 hrs" },
+      { date:"Jun 28", tag:"Day 5",   type:"study",    subject:"Python Programming",      tasks:["Units I–II — Variables, Data Types, if/elif/else, for/while loops with programs","Unit III — Lists, Tuples, Dictionaries: all methods + slicing + comprehension","Units IV–V — Functions, File Handling (read/write/seek), Exception Handling (try/except/finally)"], hrs:"6–7 hrs" },
+      { date:"Jun 29", tag:"Day 6",   type:"study",    subject:"Client Server Computing", tasks:["Units I–II — C/S Model, all server types, Fat/Thin client, C/S architecture types","Unit III — Two-Tier vs Three-Tier, MVC Pattern (draw diagrams!)","Units IV–V — RPC working steps, C/S DB Architectures (Process-per-Client, Multi-Thread, Hybrid)"], hrs:"5–6 hrs" },
+      { date:"Jun 30", tag:"Day 7",   type:"revision", subject:"Revision Day",            tasks:["Morning — Revise Internet Technology: key definitions + 12-mark outlines","Afternoon — Revise Operating System: re-do scheduling & page replacement numericals"], hrs:"6 hrs" },
+      { date:"Jul 1",  tag:"EXAM 1",  type:"exam",     subject:"Internet Technology",     tasks:["Morning — Quick read all 5 unit summaries; write 12-mark answer skeleton on rough paper","EXAM 3:00 PM – 6:00 PM → CSA 6005T"], hrs:"Exam" },
+      { date:"Jul 2",  tag:"EXAM 2",  type:"exam",     subject:"Operating System",        tasks:["Morning — Re-do one scheduling & one page-replacement numerical","EXAM 3:00 PM – 6:00 PM → CSA 6006T"], hrs:"Exam" },
+      { date:"Jul 3",  tag:"EXAM 3",  type:"exam",     subject:"Python Programming",      tasks:["Morning — Re-read programs: loops, list methods, file handling, exception handling","EXAM 3:00 PM – 6:00 PM → CSA 6007T"], hrs:"Exam" },
+      { date:"Jul 4",  tag:"EXAM 4",  type:"exam",     subject:"Client Server Computing", tasks:["Morning — Draw Two-Tier/Three-Tier/MVC diagrams + RPC steps from memory","EXAM 3:00 PM – 6:00 PM → CSA 6008T"], hrs:"Exam" },
+    ];
+
+    const subjects = [
+      {
+        code:"CSA 6005T", name:"Introduction to Internet Technology",
+        examDate:"July 1 (Wednesday) · 3:00 PM – 6:00 PM",
+        color:"#7C3AED", light:"#F5F3FF", mid:"#EDE9FE",
+        units:[
+          {
+            u:"UNIT I", topics:"WWW, Web Browsers, URLs, Domain Names, Search Engines, TCP/IP, E-Mail Protocols",
+            hot:"Email System (SMTP/POP3/IMAP) + WWW Architecture",
+            blueprint:"Draw the end-to-end email flow: Sender → SMTP Server (port 25) → Internet → POP3/IMAP Server (port 110/143) → Receiver's client. Explain each protocol's role. Also explain WWW: HTTP request → DNS lookup → Server → HTTP response. Cover URL structure (protocol://domain:port/path?query). Mention web browsers and their functions.",
+            q2:["What is WWW? (World Wide Web — hypertext info system)","Define URL and its full structure with example","What is DNS and how does it resolve IP?","Difference between POP3 and IMAP","What is TCP/IP? (name the 4 layers)","Types of Web Servers (Apache, IIS, Nginx)"]
+          },
+          {
+            u:"UNIT II", topics:"HTML Tags, Syntax, Head & Body, Images, Hyperlinks, Tables, CSS",
+            hot:"HTML Complete Document with Tables + CSS Styling (WRITE CODE!)",
+            blueprint:"Write a complete HTML page: <!DOCTYPE html> with <html>, <head> (title, meta, style), <body>. Include: heading tags h1–h6, paragraph, <b>/<i>/<u>, <br>/<hr>, <img src='' alt=''>, <a href=''>, ordered and unordered lists, table with <table><tr><th><td> and border attribute. Then show CSS: inline (style=''), internal (<style> in head), and external. Show color, font-size, margin, padding properties.",
+            q2:["What is HTML? (HyperText Markup Language) purpose","Difference between <head> and <body> tags","What is CSS and its 3 types (inline/internal/external)?","What is a hyperlink? <a href='URL'> syntax","Types of lists in HTML (OL, UL, DL)","Attributes of <img> tag (src, alt, width, height)"]
+          },
+          {
+            u:"UNIT III", topics:"HTML Editors, Design Tools, Frames, Forms, Static vs Dynamic Websites",
+            hot:"HTML Forms — All Input Types with Complete Code",
+            blueprint:"Write a complete HTML form: <form action='submit.php' method='POST'>. Include all input types: text, password, email, radio, checkbox, select (dropdown), textarea, submit, reset. Show name and value attributes. Explain GET (visible in URL, small data) vs POST (hidden, large data). Mention Frames: <frameset cols='50%,50%'><frame src='left.html'><frame src='right.html'></frameset>. List popular HTML editors: Notepad, Notepad++, Dreamweaver, VS Code.",
+            q2:["What are Frames in HTML? <frameset> tag usage","Static vs Dynamic website — key difference with example","HTML editors: Notepad++ vs Dreamweaver vs VS Code","What is a Form? <form> attributes: action and method","Difference between GET and POST in HTML forms","What is Image Map in HTML?"]
+          },
+          {
+            u:"UNIT IV", topics:"E-Commerce — Types, Advantages, Disadvantages, IT Act 2000",
+            hot:"E-Commerce: All 4 Types (B2B, B2C, C2C, G2C) + IT Act 2000 Highlights",
+            blueprint:"Define E-Commerce. Cover all types with examples: B2B (Alibaba, IndiaMART — business buys from business), B2C (Amazon, Flipkart — business sells to consumer), C2C (OLX, eBay — consumer to consumer), G2C (government portals, e-filing). Advantages: 24×7 availability, global reach, low cost, convenience, faster transactions. Disadvantages: security risk, no physical inspection, internet dependency. IT Act 2000: digital signatures (valid legal documents), cyber crimes and penalties, amendments 2008.",
+            q2:["What is E-Commerce? Definition and scope","What is B2B E-Commerce? Give 2 examples","What is IT Act 2000? Why was it enacted?","Difference: E-Commerce vs E-Business","5 advantages of E-Commerce","What is a Digital Signature? (IT Act)"]
+          },
+          {
+            u:"UNIT V", topics:"Electronic Payment Systems — Digital Token, Smart Cards, Credit Cards",
+            hot:"Types of Electronic Payment Systems — Working Mechanism of Each",
+            blueprint:"Explain 3 types in detail: 1) Digital Token-Based — e-cash (digital coins, blind signatures, anonymity), e-cheque (digital equivalent of paper cheque, signed digitally); 2) Smart Card-Based — Contact cards (chip touched to reader), Contactless cards (NFC/RFID), stored-value cards, credit cards with chip; 3) Credit Card-Based — card number + CVV + expiry → Payment Gateway → Acquiring Bank → Card Network (Visa/MasterCard) → Issuing Bank → Authorization. Include security: SSL/TLS, 3D Secure.",
+            q2:["What is EPS? (Electronic Payment System)","What is e-Cash / Digital Token?","Smart Card — definition and 2 types (contact vs contactless)","How does online Credit Card payment work?","What is a Payment Gateway?","Security risks in electronic payments"]
+          }
+        ]
+      },
+      {
+        code:"CSA 6006T", name:"Operating System",
+        examDate:"July 2 (Thursday) · 3:00 PM – 6:00 PM",
+        color:"#0369A1", light:"#F0F9FF", mid:"#E0F2FE",
+        units:[
+          {
+            u:"UNIT I", topics:"OS Definitions, Types, Functionalities, System Calls, System Structure",
+            hot:"Types of Operating Systems — Characteristics + Real Examples",
+            blueprint:"Define OS (resource manager, hardware abstraction, interface between user and hardware). Cover all types: 1) Batch OS (no user interaction, jobs processed in batches — IBM mainframes), 2) Time-Sharing/Multitasking (each user gets CPU time slice — UNIX), 3) Real-Time OS: Hard RTOS (strict deadlines — aircraft, pacemakers), Soft RTOS (best effort — multimedia), 4) Distributed OS (multiple computers as one — Google, Cloud), 5) Network OS (manage network resources — Windows Server), 6) Mobile OS (Android, iOS). For each: definition, characteristics, advantages, example.",
+            q2:["Define OS and list its 5 main functions","What is a System Call? Name 3 types with example","What is Kernel? Monolithic vs Microkernel","What is a Shell? (command interpreter between user and kernel)","Multiprogramming vs Multitasking — key difference","What is RTOS? Hard vs Soft RTOS"]
+          },
+          {
+            u:"UNIT II", topics:"CPU Scheduling: FCFS, SJF, Priority, Round Robin, Semaphores, Critical Section",
+            hot:"CPU Scheduling Algorithms with Gantt Chart + Numerical — MUST PRACTICE!",
+            blueprint:"EXAMPLE: P1(AT=0,BT=6), P2(AT=0,BT=8), P3(AT=0,BT=7), P4(AT=0,BT=3). FCFS order: P1→P2→P3→P4. Gantt: |P1(0-6)|P2(6-14)|P3(14-21)|P4(21-24)|. Calculate for each process: CT (when finishes), TAT=CT-AT, WT=TAT-BT. Average WT and TAT. Then do Round Robin (quantum=2). Also explain Semaphore: binary (0/1, mutex) and counting (N resources). Critical Section: mutual exclusion, progress, bounded waiting — Peterson's solution.",
+            q2:["What is a Process? Process vs Program difference","Draw the 5-state Process State Diagram","What is FCFS? Advantage and disadvantage","Round Robin scheduling — role of time quantum","What is a Semaphore? Binary vs Counting","What is the Critical Section Problem?"]
+          },
+          {
+            u:"UNIT III", topics:"Deadlock: Prevention/Avoidance/Detection/Recovery, Memory Management, Swapping",
+            hot:"Deadlock — 4 Coffman Conditions + Banker's Algorithm Numerical",
+            blueprint:"4 Coffman Conditions: Mutual Exclusion, Hold and Wait, No Preemption, Circular Wait. Prevention: break one condition. Avoidance: Banker's Algorithm numerical — given: Processes P0–P4, Resources A(10),B(5),C(7). Show Allocation matrix, Maximum matrix, Need=Max-Alloc, Available. Find safe sequence: for each process, if Need ≤ Available, run it, release resources, add to safe sequence. Memory Mgmt: Fixed vs Dynamic partitioning. Contiguous (First Fit, Best Fit, Worst Fit), Non-Contiguous (Paging, Segmentation). Swapping: moving process to/from disk.",
+            q2:["What is Deadlock? When does it occur?","Name and explain 4 Coffman conditions","What is Banker's Algorithm? (Deadlock Avoidance)","Contiguous vs Non-Contiguous memory allocation","What is Swapping in OS?","Deadlock Detection vs Deadlock Recovery"]
+          },
+          {
+            u:"UNIT IV", topics:"Paging, Segmentation, Demand Paging, Page Replacement: FIFO, LRU, LIFO, Virtual Memory",
+            hot:"Page Replacement Algorithms (FIFO & LRU) — Page Fault Numerical — ALWAYS IN EXAM!",
+            blueprint:"Reference string: 7,0,1,2,0,3,0,4,2,3,0,3,2 | Frames = 3. FIFO: evict oldest loaded page. Draw table showing 3 frames at each step, write P (page fault) or H (hit). Count total page faults. Then do LRU: evict least recently used page. Compare results. Hit Ratio = (total refs - page faults) / total refs. Virtual Memory: allows running programs larger than physical RAM using disk as extension. Demand Paging: load page only when needed (lazy loading).",
+            q2:["What is Paging? Page vs Frame","What is Segmentation? Difference from paging","What is Virtual Memory? How does it work?","FIFO Page Replacement — explain with small example","LRU Page Replacement — explain with small example","What is Hit Ratio and Page Fault?"]
+          },
+          {
+            u:"UNIT V", topics:"Disk Scheduling: FCFS, SSTF, SCAN, C-SCAN; Mobile OS; Android; Linux",
+            hot:"Disk Scheduling Algorithms (SSTF, SCAN, C-SCAN) with Head Movement Numerical",
+            blueprint:"Disk Queue: 176,79,34,60,92,11,41,114 | Head at 50 | Disk size 0–199. FCFS: serve in order given. SSTF: always serve nearest request (minimum seek time). SCAN (Elevator): move in one direction, serve all, hit end, reverse. C-SCAN: move one direction, hit end, jump to start (no service on return), continue. Calculate total head movement for each. Compare in a table. Android: Linux kernel based, open source, apps run on ART (Android Runtime). Linux: open-source UNIX-like OS, kernel by Linus Torvalds, multiuser multitasking.",
+            q2:["What is Disk Scheduling and why is it needed?","SSTF algorithm — how does it work?","SCAN vs C-SCAN disk scheduling difference","What is Android OS? What kernel is it based on?","Overview of Linux OS (features, uses)","What is Stable Storage Implementation?"]
+          }
+        ]
+      },
+      {
+        code:"CSA 6007T", name:"Introduction to Python Programming",
+        examDate:"July 3 (Friday) · 3:00 PM – 6:00 PM",
+        color:"#047857", light:"#F0FDF4", mid:"#DCFCE7",
+        units:[
+          {
+            u:"UNIT I", topics:"Python Variables, Operators, Data Types, if/elif/else, for loops",
+            hot:"Python Data Types + if/elif/else Control Flow with Programs",
+            blueprint:"Features: interpreted, dynamically typed, object-oriented, easy syntax, large library. Data types: int (x=5), float (x=3.14), str (x='Hello'), bool (x=True), list, tuple, dict, set. Operators: arithmetic (+,-,*,/,//,%,**), comparison (==,!=,<,>,<=,>=), logical (and, or, not), assignment (=,+=,-=). Programs to write: 1) Check even/odd using if-else, 2) Grade calculator using if-elif-else (A,B,C,D,F), 3) Find max of 3 numbers, 4) Print 1 to N using for loop.",
+            q2:["Features of Python (5 key features)","Python data types — list all 8 with examples","What is indentation in Python? Why mandatory?","Difference between = (assignment) and == (comparison)","Python arithmetic operators with examples","Syntax of if-elif-else with example"]
+          },
+          {
+            u:"UNIT II", topics:"for/while loops, range(), string methods, pass/continue/break",
+            hot:"Loops in Python — for, while with Practical Programs",
+            blueprint:"Programs to write: 1) Sum of first N natural numbers using for+range(), 2) Fibonacci series using while loop, 3) Print multiplication table (nested for loop), 4) Find factorial, 5) Reverse a string. Show: break (exits loop immediately), continue (skips current iteration, goes to next), pass (empty placeholder, no action). range(start, stop, step): range(1,11) = 1 to 10, range(0,10,2) = even numbers, range(10,0,-1) = countdown. String methods: upper(), lower(), strip(), split(), replace(), find(), len().",
+            q2:["Syntax of for loop with range() function","Syntax and use of while loop in Python","Difference: break vs continue vs pass (with code)","What does range(1,10,2) produce?","String slicing: s[1:4], s[-1], s[::-1]","Common string methods with examples (upper, lower, split)"]
+          },
+          {
+            u:"UNIT III", topics:"Strings, Lists, Tuples, Dictionaries — slicing, methods, list comprehension",
+            hot:"List Operations & Dictionary Methods — All Built-in Functions with Code",
+            blueprint:"LIST methods: append(x) — add to end, extend([]) — add multiple, insert(i,x) — at index, remove(x) — remove first occurrence, pop() — remove & return last, sort() — ascending, reverse() — reverse in place, count(x) — frequency, index(x) — position, len() — length. Slicing: list[1:4], list[::2], list[::-1] (reverse). List comprehension: [x**2 for x in range(1,6)] = [1,4,9,16,25]. DICT: keys(), values(), items(), get(k, default), update({k:v}), pop(k). TUPLE: immutable, written as (1,2,3), used where data should not change.",
+            q2:["List vs Tuple — mutable vs immutable","List methods: append, remove, pop, sort (write syntax)","What is slicing in Python? list[1:3] example","Dictionary — key:value pairs, how to access?","What is List Comprehension? Write example","Mutable vs Immutable — which types are which?"]
+          },
+          {
+            u:"UNIT IV", topics:"Functions (def, return, parameters), File Operations (read/write/readline/seek)",
+            hot:"File Handling in Python — Complete Program with All File Operations",
+            blueprint:"FUNCTION: def greet(name): return 'Hello ' + name. Show: positional args, default args (def f(x=10)), *args. FILE HANDLING — Write complete program: 1) Write to file: with open('data.txt','w') as f: f.write('Hello') 2) Read entire: with open('data.txt','r') as f: content = f.read() 3) Read line: f.readline() — returns one line including \\n 4) Read all lines: f.readlines() — returns list of lines 5) Append: open('data.txt','a') 6) Writelines: f.writelines(['line1\\n','line2\\n']) 7) seek(0) — move pointer to beginning, tell() — current position. Always use 'with' statement (auto-closes file).",
+            q2:["What is a function? def keyword and return statement","File opening modes: r, w, a, r+, w+ — difference","read() vs readline() vs readlines() — exact difference","write() vs writelines() — difference","What is seek()? What does seek(0) do?","Why use 'with open()' statement?"]
+          },
+          {
+            u:"UNIT V", topics:"Exception Handling (try/except/else/finally), Packages: numpy, pandas, matplotlib",
+            hot:"Exception Handling — try/except/else/finally with Multiple Exception Types",
+            blueprint:"Write complete exception handling program: try: (risky code — open file / divide / convert type) except ZeroDivisionError: print('Cannot divide by zero') except ValueError: print('Invalid value') except FileNotFoundError: print('File not found') except Exception as e: print('Error:', e) else: print('No exception occurred!') finally: print('This always runs — close file/DB connection here'). Also: raise ValueError('Custom error'). PACKAGES: numpy — arrays, math ops (np.array([1,2,3]), np.mean(), np.sum()). pandas — DataFrame, read_csv (pd.read_csv('file.csv'), df.head()). matplotlib — graphs (plt.plot(), plt.bar(), plt.show()).",
+            q2:["What is an Exception? Give 4 built-in exceptions","try-except-finally syntax — when does finally run?","What is 'raise' statement in Python?","What is numpy? Create an array example","What is pandas? What is a DataFrame?","What is matplotlib? (data visualization library)"]
+          }
+        ]
+      },
+      {
+        code:"CSA 6008T", name:"Client Server Computing",
+        examDate:"July 4 (Saturday) · 3:00 PM – 6:00 PM",
+        color:"#B45309", light:"#FFFBEB", mid:"#FEF3C7",
+        units:[
+          {
+            u:"UNIT I", topics:"Basic C/S Model, Types of Servers, Fat/Thin Client, Stateless/Stateful",
+            hot:"Basic Client/Server Computing Model + All Server Types (draw diagram!)",
+            blueprint:"Draw the C/S model: Client (sends request) → Network → Server (processes, sends response). Explain all server types: File Server (stores and shares files — NFS), Print Server (manages shared printers), Application Server (runs business applications — Tomcat, JBoss), Mail Server (handles email — Sendmail, Exchange), Directory Services Server (LDAP — stores network resource info — Active Directory), Web Server (serves HTTP content — Apache, Nginx, IIS), Database Server (manages SQL — MySQL, Oracle), Transaction Server (handles ACID transactions). Fat Client: processing done at client side, server only stores data (client has thick software). Thin Client: all processing at server, client only displays (used in enterprises — terminals).",
+            q2:["What is Client/Server Computing?","Fat Client vs Thin Client — key difference","Stateless vs Stateful server","What is a File Server? Give example","What is a Web Server? Name 2 examples","What is a Database Server?"]
+          },
+          {
+            u:"UNIT II", topics:"C/S Types — Single/Single, Multiple/Single, Multiple/Multiple, Distributed",
+            hot:"Types of Client/Server Architecture with Diagrams and Comparison Table",
+            blueprint:"Draw and explain all types: 1) Single Client / Single Server — dedicated connection, simple, used in small setups (ATM), not scalable. 2) Multiple Clients / Single Server — most common (web servers), clients share one server, risk of bottleneck and overload. 3) Multiple Clients / Multiple Servers — load balancing distributes client requests across servers, high availability, fault-tolerant, used in Google/Facebook. 4) Distributed Computing — resources (CPU, memory, storage) spread across multiple networked computers, appear as single system. Alternatives: P2P (Peer-to-Peer — BitTorrent), Cloud Computing. Create comparison table: Architecture | Example | Advantage | Disadvantage.",
+            q2:["Single Client/Single Server — when is it used?","Multiple Clients/Single Server — what is the bottleneck problem?","What is Load Balancing in C/S systems?","Distributed Computing — definition","Alternatives to C/S systems (P2P, Cloud)","Peer-to-Peer vs Client/Server model"]
+          },
+          {
+            u:"UNIT III", topics:"Two-Tier, Three-Tier Computing, Middleware, MVC, C/S Topologies",
+            hot:"Two-Tier vs Three-Tier Architecture + MVC Pattern — MOST IMPORTANT UNIT!",
+            blueprint:"DRAW ALL DIAGRAMS. Two-Tier: Client (Presentation + Business Logic) ↔ Database Server. Simple, fast, tight coupling, poor scalability, security risk (client has direct DB access). Three-Tier: Client/Browser (Presentation Tier) ↔ Application Server (Business Logic Tier) ↔ Database Server (Data Tier). Better security (client never accesses DB directly), scalable (can add more app servers), maintainable. MVC Pattern: Model (data + database logic), View (user interface — HTML/CSS), Controller (handles user input, updates Model, selects View). Used in web frameworks: Django (Python), Spring (Java). Middleware: software layer between client and server — CORBA, RMI, MOM (Message-Oriented Middleware). C/S Topologies: Bus, Ring, Star (most common).",
+            q2:["What is Two-Tier Architecture? Draw diagram","What is Three-Tier Architecture? Draw diagram","3 advantages of Three-Tier over Two-Tier","What is Middleware? Give 2 examples","Explain MVC — Model, View, Controller roles","Types of Client/Server topologies"]
+          },
+          {
+            u:"UNIT IV", topics:"Client Services, RPC, Windows Services, Print Services, Remote Boot, Databases",
+            hot:"Remote Procedure Call (RPC) — Working Steps in Detail",
+            blueprint:"RPC allows calling a function on a remote computer as if it were local. Steps: 1) Client calls Client Stub procedure (as if calling local function), 2) Client Stub marshals (packs/serializes) parameters into network message, 3) Message sent over network to server, 4) Server Stub receives and unmarshals (unpacks/deserializes) the message, 5) Server Stub calls the actual Server Procedure, 6) Server executes procedure and gets result, 7) Server Stub marshals the result, sends back, 8) Client Stub receives, unmarshals, returns result to client. Benefit: location transparency — developer doesn't worry about network details. Also cover: Windows services (DHCP, DNS, FTP, WINS, File Sharing), Remote Boot Services (diskless workstations boot from server — PXE boot).",
+            q2:["What is RPC (Remote Procedure Call)?","What is Marshalling in RPC?","Windows Network Services — list 5","What is Remote Boot Service? (PXE)","What is Client-Side utility services?","Difference: RPC vs normal (local) procedure call"]
+          },
+          {
+            u:"UNIT V (Unit IV-b in syllabus)", topics:"C/S Databases, DB Architecture: Process-per-Client, Multi-Threaded, Hybrid",
+            hot:"Client/Server Database Architectures — All 3 Types with Comparison Table",
+            blueprint:"C/S Database Computing: client sends SQL query → DB Server processes → returns results. Vs Mainframe (all on one machine). VS PC/File Server (file moved to client, client processes — inefficient). Now 3 DB Server Architectures: 1) Process-Per-Client Architecture: Server spawns a new separate OS process for every client connection. Advantage: Isolation (one crash doesn't affect others). Disadvantage: Very resource-heavy (high RAM, slow with 1000s of clients). 2) Multi-Threaded Architecture: Single server process handles ALL clients using threads. Advantage: Efficient memory, faster context switch, scalable (MySQL, Oracle, SQL Server use this). Disadvantage: one bug can crash all threads. 3) Hybrid Architecture: Pool of processes, each process is multi-threaded. Best of both — most modern databases use this. Draw diagram for each.",
+            q2:["What is Client/Server Database Computing?","Process-Per-Client architecture — advantage & disadvantage","Multi-Threaded server — why more efficient?","Hybrid DB Architecture — when preferred?","C/S Database vs PC/File Server Computing","What is the role of a Database Server in C/S?"]
+          }
+        ]
+      }
+    ];
+
+    const examTips = [
+      {
+        icon:"📝", title:"12-Mark Answer Format (write 3–4 pages)",
+        tips:[
+          "Open with a 2-line definition of the main term",
+          "Draw a diagram or table — even a simple one adds 2–3 marks easily",
+          "Use numbered sub-points or sub-headings for each part",
+          "Underline or CAPITALIZE key terms (FCFS, MVC, SMTP, etc.)",
+          "End with a comparison table or 'Advantages / Disadvantages' section",
+          "Aim for at least 8–10 distinct points — quantity signals effort"
+        ]
+      },
+      {
+        icon:"✏️", title:"2-Mark Questions Strategy",
+        tips:[
+          "Definition in the very first sentence — this alone can earn 1 mark",
+          "Give exactly 1–2 examples after the definition",
+          "4–6 lines is ideal; never leave 2-mark blank (no negative marking!)",
+          "If totally unsure, write something related — partial marks are awarded"
+        ]
+      },
+      {
+        icon:"🧮", title:"Numericals — OS Paper (Practice Daily!)",
+        tips:[
+          "CPU Scheduling: always draw Gantt chart, show CT, TAT, WT calculations in a table",
+          "Page Replacement: draw the frame table step by step, circle every page fault",
+          "Banker's Algorithm: write Allocation, Max, Need matrices clearly before solving",
+          "Disk Scheduling: write each step of head movement, total = sum of all moves",
+          "Show all steps even if you're unsure of final answer — method marks are given!"
+        ]
+      },
+      {
+        icon:"💻", title:"Python Programs — Write Actual Code",
+        tips:[
+          "Always use proper Python indentation (4 spaces) — syntax errors lose marks",
+          "Add # comments above each block to explain what you're doing",
+          "Write the expected output below each program",
+          "File handling: always show the 'with open() as f:' version — cleaner",
+          "Exception handling: show at least 2 different except blocks"
+        ]
+      },
+      {
+        icon:"⏰", title:"3-Hour Exam Time Management",
+        tips:[
+          "First 25–30 mins: Attempt ALL 2-mark questions — this secures baseline marks",
+          "Remaining 2.5 hours: 5 descriptive questions × ~25 mins each",
+          "Write the 12-mark question you're most confident about FIRST",
+          "If stuck mid-answer, write headings/points of what you know and move on",
+          "Save last 10 minutes to re-check question numbering and completeness"
+        ]
+      },
+      {
+        icon:"🌙", title:"Night Before Each Exam",
+        tips:[
+          "NEVER study new topics the night before — only revise already-prepared material",
+          "Re-read your 12-mark answer outlines / key points",
+          "Sleep by 10:30–11 PM — rest is essential for memory retrieval",
+          "Eat a proper meal before the 3 PM exam; don't go on an empty stomach",
+          "Carry: admit card, pen (2 spare), pencil (for diagrams), eraser, ruler"
+        ]
+      }
+    ];
+
+    // ─── STYLES ─────────────────────────────────────────────────────────────────
+
+    const S = {
+      root: { fontFamily:"'Segoe UI', system-ui, sans-serif", maxWidth:860, margin:"0 auto", padding:16, background:"#F8FAFC", minHeight:"100vh" },
+      header: { background:"linear-gradient(135deg,#1E1B4B 0%,#312E81 50%,#1E293B 100%)", borderRadius:16, padding:"24px 28px", marginBottom:20, color:"white" },
+      headerEye: { fontSize:10, letterSpacing:3, textTransform:"uppercase", color:"#A5B4FC", marginBottom:6 },
+      headerTitle: { margin:"0 0 2px", fontSize:22, fontWeight:800, letterSpacing:-0.5 },
+      headerSub: { margin:"0 0 18px", color:"#94A3B8", fontSize:13 },
+      examGrid: { display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))", gap:10 },
+      examCard: (color) => ({ background:"rgba(255,255,255,0.08)", borderRadius:10, padding:"10px 14px", borderLeft:`3px solid ${color}` }),
+      examCardDate: { color:"#CBD5E1", fontSize:11, marginBottom:3 },
+      examCardName: { color:"white", fontWeight:700, fontSize:13 },
+      tabs: { display:"flex", gap:8, marginBottom:20, flexWrap:"wrap" },
+      tab: (active) => ({ padding:"10px 20px", borderRadius:10, border:"none", cursor:"pointer", fontWeight:700, fontSize:13, transition:"all 0.15s", background: active ? "#312E81" : "white", color: active ? "white" : "#64748B", boxShadow: active ? "0 4px 12px rgba(49,46,129,0.3)" : "0 1px 3px rgba(0,0,0,0.08)" }),
+      alertBox: { background:"#FEF9C3", border:"1px solid #FDE047", borderRadius:10, padding:"12px 16px", marginBottom:18, fontSize:13, color:"#713F12" },
+      dayCard: (type) => ({ background:"white", borderRadius:12, padding:"14px 18px", marginBottom:10, borderLeft:`4px solid ${type==="exam"?"#EF4444":type==="revision"?"#10B981":type==="today"?"#7C3AED":"#CBD5E1"}`, boxShadow:"0 1px 4px rgba(0,0,0,0.07)" }),
+      dayTag: (type) => ({ display:"inline-block", padding:"2px 10px", borderRadius:20, fontSize:11, fontWeight:700, marginRight:8, background:type==="exam"?"#FEF2F2":type==="revision"?"#ECFDF5":type==="today"?"#EEF2FF":"#F1F5F9", color:type==="exam"?"#EF4444":type==="revision"?"#059669":type==="today"?"#7C3AED":"#64748B" }),
+      dayDate: { fontWeight:800, fontSize:15, color:"#1E293B" },
+      daySub: { color:"#64748B", fontSize:13, fontWeight:600, marginLeft:6 },
+      taskLine: { color:"#475569", fontSize:13, marginTop:5, paddingLeft:10, borderLeft:"2px solid #E2E8F0", lineHeight:1.5 },
+      hrs: (type) => ({ display:"inline-block", padding:"4px 12px", borderRadius:8, fontSize:12, fontWeight:700, background:type==="exam"?"#FEF2F2":"#F8FAFC", color:type==="exam"?"#EF4444":"#64748B", whiteSpace:"nowrap", marginTop:4 }),
+      subTabs: { display:"flex", gap:8, marginBottom:20, flexWrap:"wrap" },
+      subTab: (active, color) => ({ padding:"8px 16px", borderRadius:10, border:`2px solid ${active ? color : "#E2E8F0"}`, background: active ? color : "white", color: active ? "white" : "#64748B", cursor:"pointer", fontWeight:700, fontSize:12, boxShadow: active ? `0 4px 12px ${color}40` : "none", transition:"all 0.15s" }),
+      subHeader: (c) => ({ background:c.mid, borderRadius:12, padding:"14px 18px", marginBottom:16, borderLeft:`4px solid ${c.color}` }),
+      unitCard: { background:"white", borderRadius:12, marginBottom:10, overflow:"hidden", boxShadow:"0 1px 4px rgba(0,0,0,0.08)" },
+      unitHeader: { padding:"14px 18px", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center" },
+      unitBadge: (color) => ({ background:color, color:"white", padding:"2px 10px", borderRadius:20, fontSize:11, fontWeight:800, marginRight:10, display:"inline-block", flexShrink:0 }),
+      hotTag: { display:"inline-flex", alignItems:"center", gap:4, padding:"3px 10px", borderRadius:20, fontSize:11, fontWeight:700, background:"linear-gradient(90deg,#FEF3C7,#FDE68A)", color:"#92400E", marginTop:6 },
+      expanded: (mid) => ({ padding:"0 18px 18px", borderTop:`2px solid ${mid}` }),
+      blueprint: (c) => ({ background:c.mid, borderRadius:8, padding:14, marginBottom:14, marginTop:12 }),
+      blueprintTitle: (color) => ({ fontWeight:800, color:color, marginBottom:6, fontSize:13 }),
+      blueprintText: { color:"#374151", fontSize:13, lineHeight:1.7, whiteSpace:"pre-line" },
+      q2grid: { display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(230px,1fr))", gap:8 },
+      q2item: { background:"#F8FAFC", borderRadius:8, padding:"8px 12px", fontSize:12, color:"#475569", border:"1px solid #E2E8F0", lineHeight:1.5 },
+      tipCard: { background:"white", borderRadius:12, padding:20, marginBottom:14, boxShadow:"0 1px 4px rgba(0,0,0,0.08)" },
+      tipTitle: { margin:"0 0 12px", fontSize:16, fontWeight:800, color:"#1E293B" },
+      tipRow: { display:"flex", gap:10, marginBottom:8, alignItems:"flex-start" },
+      check: { color:"#10B981", fontWeight:800, marginTop:2, flexShrink:0, fontSize:14 },
+      tipText: { color:"#475569", fontSize:13, lineHeight:1.5 }
+    };
+
+    // ─── COMPONENT ──────────────────────────────────────────────────────────────
+
+    function StudyPlanner() {
+      const [tab, setTab] = useState("plan");
+      const [subIdx, setSubIdx] = useState(0);
+      const [openUnit, setOpenUnit] = useState(null);
+
+      const toggleUnit = (key) => setOpenUnit(prev => prev === key ? null : key);
+
+      return (
+        <div style={S.root}>
+
+          {/* ── HEADER ── */}
+          <div style={S.header}>
+            <div style={S.headerEye}>JNVU · BCA IV Semester Examination 2025–26</div>
+            <h1 style={S.headerTitle}>📚 Full Marks Study Planner</h1>
+            <p style={S.headerSub}>7 days · 4 papers · 3 PM–6 PM daily · Section A (2-mark) + Section B (12-mark)</p>
+            <div style={S.examGrid}>
+              {examSchedule.map((e,i) => (
+                <div key={i} style={S.examCard(e.color)}>
+                  <div style={S.examCardDate}>{e.date} ({e.day}) · {e.days} days left</div>
+                  <div style={{ ...S.examCardName, color:e.color }}>{e.code}</div>
+                  <div style={{ color:"#CBD5E1", fontSize:12, marginTop:2 }}>{e.name}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── MAIN TABS ── */}
+          <div style={S.tabs}>
+            {[["plan","📅 Study Plan"],["subjects","📖 Subject Guide"],["tips","💡 Exam Tips"]].map(([id,label]) => (
+              <button key={id} style={S.tab(tab===id)} onClick={() => setTab(id)}>{label}</button>
+            ))}
+          </div>
+
+          {/* ════════════════════════════════════════
+              TAB 1 — STUDY PLAN
+          ════════════════════════════════════════ */}
+          {tab === "plan" && (
+            <div>
+              <div style={S.alertBox}>
+                ⚡ <strong>Strategy:</strong> 2 days per subject + 1 revision day before first exam. Exams are at 3 PM daily — use each morning for quick revision of that day's subject. All exams are 3 hours.
+              </div>
+              {studyPlan.map((d, i) => {
+                const type = d.type === "exam" ? "exam" : d.type === "revision" ? "revision" : d.tag === "TODAY" ? "today" : "normal";
+                return (
+                  <div key={i} style={S.dayCard(type)}>
+                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", flexWrap:"wrap", gap:8 }}>
+                      <div style={{ flex:1 }}>
+                        <div style={{ display:"flex", alignItems:"center", flexWrap:"wrap", marginBottom:6 }}>
+                          <span style={S.dayTag(type)}>{d.tag}</span>
+                          <span style={S.dayDate}>{d.date}</span>
+                          <span style={S.daySub}>— {d.subject}</span>
+                        </div>
+                        {d.tasks.map((t,j) => (
+                          <div key={j} style={S.taskLine}>• {t}</div>
+                        ))}
+                      </div>
+                      <div style={{ paddingTop:4 }}>
+                        <span style={S.hrs(type)}>{d.hrs}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* ════════════════════════════════════════
+              TAB 2 — SUBJECT GUIDE
+          ════════════════════════════════════════ */}
+          {tab === "subjects" && (
+            <div>
+              <div style={S.alertBox}>
+                🔥 = Most likely 12-mark topic · Tap any unit to see the full answer blueprint + 2-mark questions
+              </div>
+              {/* Subject selector */}
+              <div style={S.subTabs}>
+                {subjects.map((s,i) => (
+                  <button key={i} style={S.subTab(subIdx===i, s.color)} onClick={() => { setSubIdx(i); setOpenUnit(null); }}>
+                    {s.code}
+                  </button>
+                ))}
+              </div>
+
+              {/* Subject content */}
+              {(() => {
+                const sub = subjects[subIdx];
+                const c = { color:sub.color, light:sub.light, mid:sub.mid };
+                return (
+                  <div>
+                    <div style={S.subHeader(c)}>
+                      <div style={{ fontWeight:800, fontSize:17, color:sub.color }}>{sub.code} — {sub.name}</div>
+                      <div style={{ color:"#64748B", fontSize:13, marginTop:3 }}>🗓 {sub.examDate}</div>
+                    </div>
+
+                    {sub.units.map((unit, ui) => {
+                      const key = `${subIdx}-${ui}`;
+                      const isOpen = openUnit === key;
+                      return (
+                        <div key={ui} style={S.unitCard}>
+                          <div style={S.unitHeader} onClick={() => toggleUnit(key)}>
+                            <div style={{ flex:1 }}>
+                              <div style={{ display:"flex", alignItems:"flex-start", gap:0, flexWrap:"wrap" }}>
+                                <span style={S.unitBadge(sub.color)}>{unit.u}</span>
+                                <span style={{ fontWeight:700, color:"#1E293B", fontSize:14, paddingTop:1, flex:1 }}>{unit.topics}</span>
+                              </div>
+                              <div style={S.hotTag}>🔥 12-Mark: {unit.hot}</div>
+                            </div>
+                            <span style={{ color:"#94A3B8", fontSize:16, marginLeft:10, flexShrink:0 }}>{isOpen ? "▲" : "▼"}</span>
+                          </div>
+
+                          {isOpen && (
+                            <div style={S.expanded(sub.mid)}>
+                              <div style={S.blueprint(c)}>
+                                <div style={S.blueprintTitle(sub.color)}>📝 12-Mark Answer Blueprint — write THIS:</div>
+                                <div style={S.blueprintText}>{unit.blueprint}</div>
+                              </div>
+                              <div style={{ fontWeight:800, color:"#1E293B", marginBottom:10, fontSize:13 }}>
+                                ✏️ Expected 2-Mark Questions from {unit.u}:
+                              </div>
+                              <div style={S.q2grid}>
+                                {unit.q2.map((q,qi) => (
+                                  <div key={qi} style={S.q2item}><strong>{qi+1}.</strong> {q}</div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+          {/* ════════════════════════════════════════
+              TAB 3 — EXAM TIPS
+          ════════════════════════════════════════ */}
+          {tab === "tips" && (
+            <div>
+              {examTips.map((sec,i) => (
+                <div key={i} style={S.tipCard}>
+                  <h3 style={S.tipTitle}>{sec.icon} {sec.title}</h3>
+                  {sec.tips.map((tip,j) => (
+                    <div key={j} style={S.tipRow}>
+                      <span style={S.check}>✓</span>
+                      <span style={S.tipText}>{tip}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+              <div style={{ background:"#312E81", borderRadius:12, padding:20, color:"white", textAlign:"center" }}>
+                <div style={{ fontSize:24, marginBottom:8 }}>🎯</div>
+                <div style={{ fontWeight:800, fontSize:16, marginBottom:6 }}>You've got this!</div>
+                <div style={{ color:"#A5B4FC", fontSize:13, lineHeight:1.6 }}>
+                  10 days, 4 papers, and a solid plan. Focus on the 🔥 12-mark topics first —<br/>
+                  they're worth 60% of each paper. Consistency beats cramming. All the best!
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<StudyPlanner />);
+  </script>
+</body>
+</html>
